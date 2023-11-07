@@ -1,0 +1,12 @@
+{
+  "Led Blinker": {
+    "Task Description": "Make a led blink (turn on/off) repeatedly every 500ms (half a second)\n",
+    "Requirements": "Microcontroller, Resistor, LED",
+    "Difficulty": 1
+  },
+  "Time Counter": {
+    "Task Description": "Count the time between 2 clicks of a button and show the time on an LCD (real time)",
+    "Requirements": "Microcontroller, Potentiometer, Button, LCD",
+    "Difficulty": 3
+  }
+}
