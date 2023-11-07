@@ -6,7 +6,7 @@ def load_projects():
     return projects
 
 
-import hydralit.hydralit as hy
+import hydralit.hydralit_ as hy
 import streamlit as st
 import hydralit_components.hydralit_components as hc
 
