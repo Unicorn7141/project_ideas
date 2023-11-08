@@ -6,9 +6,9 @@ def load_projects():
     return projects
 
 
-import hydralit.hydralit_ as hy
+import hydralit as hy
 import streamlit as st
-import hydralit_components.hydralit_components as hc
+import hydralit_components as hc
 
 
 app = hy.HydraApp("Project Ideas")
