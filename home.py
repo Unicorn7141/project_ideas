@@ -3,9 +3,11 @@ import json
 
 def load_projects():
     projects = dict(json.loads(open("projects.json").read()))
-    return projects
+    return projects["projects"]
 
 
+import numpy as np
+import pandas as pd
 import hydralit as hy
 import streamlit as st
 import hydralit_components as hc
@@ -62,19 +64,21 @@ def home():
 @app.addapp(title="Project Ideas", icon="💡")
 def projects():
     projects = load_projects()
-    for project in projects.keys():
-        content = "\n".join([f"{k}: {v}\n" for k, v in projects[project].items()][:-1])
-        difficulty = projects[project]["Difficulty"]
+    for project in projects:
+        keys = project.keys()
 
-        with hy.expander(project):
+        content = "\n".join([f"{k.capitalize()}: {project[k]}\n" for k in keys][1:-1])
+        difficulty = project["difficulty"]
+
+        with hy.expander(f'**{project["name"]}**'):
             hy.write(content)
             hc.progress_bar(
                 value=difficulty * 10,
-                content_text="Difficulty",
+                content_text=f"Difficulty: {'Easy' if difficulty <= 4 else 'Medium' if difficulty <= 7 else 'Hard'}",
                 sentiment="good"
-                if difficulty <= 3
+                if difficulty <= 4
                 else "neutral"
-                if difficulty <= 6
+                if difficulty <= 7
                 else "bad",
             )
 
@@ -82,6 +86,47 @@ def projects():
 @app.addapp(title="Resources", icon="📜")
 def resources():
     hy.info("Resources")
+
+
+@app.addapp(title="Add Project", icon="🔐")
+def add_projects():
+    allow_access = bool(app.check_access()[0])
+    placeholder = hy.empty()
+    placeholder.error("No Access", icon="🔒")
+    with placeholder.form("login_form") as form:
+        username = hy.text_input("Username")
+        password = hy.text_input("Password", type="password")
+
+        if hy.form_submit_button("Login"):
+            secret_username = st.secrets.get("DB_USERNAME")
+            secret_password = st.secrets.get("DB_PASSWORD")
+
+            allow_access = secret_username == username and secret_password == password
+
+    if allow_access:
+        placeholder.empty()
+        placeholder.success("Admin Acccess", icon="🔓")
+        app.set_access(1, "Admin")
+        with hy.form("project", True) as form:
+            project_name = hy.text_input("Project Name")
+            project_description = hy.text_area("Description")
+            project_requirements = hy.text_input("Requirements")
+            project_difficulty = hy.select_slider(
+                "Difficulty", [i for i in np.arange(1, 10.5, 0.5)]
+            )
+
+            if hy.form_submit_button("Add project"):
+                new_project = {
+                    "name": project_name,
+                    "description": project_description,
+                    "requirements": project_requirements,
+                    "difficulty": project_difficulty,
+                }
+                with open("projects.json", "r+") as f:
+                    file_data = json.load(f)
+                    file_data["projects"].append(new_project)
+                    f.seek(0)
+                    json.dump(file_data, f, indent=2)
 
 
 app.run()

@@ -1,12 +1,22 @@
 {
-  "Led Blinker": {
-    "Task Description": "Make a led blink (turn on/off) repeatedly every 500ms (half a second)\n",
-    "Requirements": "Microcontroller, Resistor, LED",
-    "Difficulty": 1
-  },
-  "Time Counter": {
-    "Task Description": "Count the time between 2 clicks of a button and show the time on an LCD (real time)",
-    "Requirements": "Microcontroller, Potentiometer, Button, LCD",
-    "Difficulty": 3
-  }
+  "projects": [
+    {
+      "name": "Led Blinker",
+      "description": "Make a led blink (turn on/off) repeatedly every 500ms (half a second)\n",
+      "requirements": "Microcontroller, Resistor, LED",
+      "difficulty": 1
+    },
+    {
+      "name": "Time Counter",
+      "description": "Count the time between 2 clicks of a button and show the time on an LCD (real time)",
+      "requirements": "Microcontroller, Potentiometer, Button, LCD",
+      "difficulty": 3
+    },
+    {
+      "name": "Reverse Sensor",
+      "description": "Make the buzzer beep frequency higher as an object is getting closer to a distance sensor",
+      "requirements": "Microcontroller, Distance Sensor, Buzzer",
+      "difficulty": 4.5
+    }
+  ]
 }
