@@ -3,7 +3,7 @@ import pandas as pd
 import hydralit as hy
 import streamlit as st
 import hydralit_components as hc
-from db import *
+from funcs.db import *
 
 projects = load_projects()
 edit = {}
