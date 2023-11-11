@@ -1,19 +1,17 @@
-import json
-
-
-def load_projects():
-    projects = dict(json.loads(open("projects.json").read()))
-    return projects["projects"]
-
-
 import numpy as np
 import pandas as pd
 import hydralit as hy
 import streamlit as st
 import hydralit_components as hc
+from db import *
 
+projects = load_projects()
+edit = {}
 
-app = hy.HydraApp("Project Ideas")
+app = hy.HydraApp("Project Ideas", favicon="💡")
+allow_access = bool(app.check_access()[0])
+updates = hy.container()
+
 
 hide_streamlit_style = """
             <style>
@@ -65,13 +63,17 @@ def home():
 def projects():
     projects = load_projects()
     for project in projects:
+        edit[project["name"]] = False
         keys = project.keys()
+
+        # placeholder = hy.container()
 
         content = "\n".join([f"{k.capitalize()}: {project[k]}\n" for k in keys][1:-1])
         difficulty = project["difficulty"]
 
         with hy.expander(f'**{project["name"]}**'):
             hy.write(content)
+
             hc.progress_bar(
                 value=difficulty * 10,
                 content_text=f"Difficulty: {'Easy' if difficulty <= 4 else 'Medium' if difficulty <= 7 else 'Hard'}",
@@ -82,15 +84,97 @@ def projects():
                 else "bad",
             )
 
+            if allow_access:
+                del_btn = hy.button(
+                    "Delete Project",
+                    key=project["name"],
+                    on_click=delete,
+                    args=(project["name"],),
+                )
+
+                changes = {}
+                with hy.form(project["name"]) as form:
+                    name = hy.text_input(
+                        "Project Name",
+                        project["name"],
+                    )
+
+                    description = hy.text_area(
+                        "Project Description",
+                        project["description"],
+                    )
+
+                    requirements = hy.text_input(
+                        "Project Requirements",
+                        project["requirements"],
+                    )
+
+                    difficulty = hy.slider(
+                        "Project Difficulty",
+                        1.0,
+                        10.0,
+                        float(project["difficulty"]),
+                        0.5,
+                    )
+
+                    if hy.form_submit_button("Save Changes"):
+                        changes = {
+                            "name": name,
+                            "description": description,
+                            "requirements": requirements,
+                            "difficulty": difficulty,
+                        }
+
+                        edit_project(project["name"], changes)
+
 
 @app.addapp(title="Resources", icon="📜")
 def resources():
-    hy.info("Resources")
+    hy.info("Still working on it....")
+    # categories = ["Microcontrollers", "Components", "Informational", "Other"]
+
+    # if allow_access:
+    #     with hy.form("resource"):
+    #         hy.title("Add a new resource")
+    #         category = hy.selectbox("Category", categories)
+    #         title = hy.text_input("Title")
+    #         link = hy.text_input("Link")
+    #         link_text = hy.text_input("Link Text")
+    #         description = hy.text_area("Description")
+    #         media = hy.file_uploader("Media/Files")
+    #         embed_media = hy.checkbox("Embed")
+    #         if hy.form_submit_button("Add Resource"):
+    #             with open("resources.json", "r+") as file:
+    #                 resources = dict(json.load(file))
+
+    #             resources[category.lower()].append(
+    #                 {
+    #                     "title": title,
+    #                     "description": description,
+    #                     "link": link,
+    #                     "link_text": link_text,
+    #                     # "media": media.read(),
+    #                     # "embed": embed_media,
+    #                 }
+    #             )
+    #             with open("resources.json", "w") as file:
+    #                 json.dump(resources, file, indent=2)
+
+    # with open("resources.json", "r") as file:
+    #     resources = json.load(file)
+
+    # for category in categories:
+    #     with hy.expander(category):
+    #         try:
+    #             for rsrc in resources[category.lower()]:
+    #                 rsrc
+    #         except KeyError as ke:
+    #             hy.error("Nothing here yet")
 
 
 @app.addapp(title="Add Project", icon="🔐")
 def add_projects():
-    allow_access = bool(app.check_access()[0])
+    global allow_access
     placeholder = hy.empty()
     placeholder.error("No Access", icon="🔒")
     with placeholder.form("login_form") as form:

@@ -2,15 +2,15 @@
   "projects": [
     {
       "name": "Led Blinker",
-      "description": "Make a led blink (turn on/off) repeatedly every 500ms (half a second)\n",
+      "description": "Updated description",
       "requirements": "Microcontroller, Resistor, LED",
-      "difficulty": 1
+      "difficulty": 1.0
     },
     {
       "name": "Time Counter",
       "description": "Count the time between 2 clicks of a button and show the time on an LCD (real time)",
       "requirements": "Microcontroller, Potentiometer, Button, LCD",
-      "difficulty": 3
+      "difficulty": 3.0
     },
     {
       "name": "Reverse Sensor",
